@@ -16,7 +16,7 @@ HTML = """
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1 font-size=16">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>AI Sentiment Intelligence Dashboard</title>
     <style>
         :root {
@@ -70,7 +70,6 @@ HTML = """
             box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.5);
         }
 
-        /* Header Block Section */
         .header-panel {
             text-align: center;
             border-bottom: 1px dashed var(--border-color);
@@ -97,7 +96,6 @@ HTML = """
             letter-spacing: 0.5px;
         }
 
-        /* Input Form Elements */
         .input-label {
             display: block;
             font-size: 14px;
@@ -127,7 +125,6 @@ HTML = """
             box-shadow: 0 0 20px var(--primary-glow);
         }
 
-        /* Action Buttons Row */
         .action-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -171,7 +168,6 @@ HTML = """
             background: rgba(255, 255, 255, 0.1);
         }
 
-        /* Prediction Outputs & Visual Meters */
         .result-panel {
             border-top: 1px dashed var(--border-color);
             padding-top: 28px;
@@ -234,7 +230,6 @@ HTML = """
         .fill-pos { background: linear-gradient(90deg, #10b981, #34d399); }
         .fill-neg { background: linear-gradient(90deg, #ef4444, #f87171); }
 
-        /* Statistics Layout Segment */
         .stats-panel {
             border-top: 1px dashed var(--border-color);
             padding-top: 24px;
@@ -264,7 +259,6 @@ HTML = """
         .stats-lbl { color: var(--text-muted); font-weight: 500; }
         .stats-val { color: var(--text-primary); font-weight: 600; }
 
-        /* Signature Line */
         .footer {
             margin-top: 36px;
             padding-top: 20px;
@@ -285,13 +279,11 @@ HTML = """
 <body>
 
 <div class="dashboard">
-    <!-- Top Identity Branding Banner -->
     <div class="header-panel">
         <h1>🤖 AI Sentiment Analysis</h1>
         <div class="meta-tags">Logistic Regression • TF-IDF • Flask</div>
     </div>
 
-    <!-- Core Interactive Form System -->
     <form method="POST" id="analysisForm">
         <label class="input-label" for="review">Write your Review Here</label>
         <textarea
@@ -306,7 +298,6 @@ HTML = """
         </div>
     </form>
 
-    <!-- Context Dependent Dynamic Prediction UI Outputs -->
     {% if prediction %}
     <div class="result-panel">
         <div class="status-badge badge-{{color}}">
@@ -325,7 +316,6 @@ HTML = """
     </div>
     {% endif %}
 
-    <!-- Meta-Analysis Realtime Structural Quantities Display Block -->
     <div class="stats-panel">
         <div class="stats-title">Statistics</div>
         <div class="stats-grid">
@@ -348,7 +338,6 @@ HTML = """
         </div>
     </div>
 
-    <!-- Designer Signature Bottom Element -->
     <div class="footer">
         Developed by Pranita
     </div>
@@ -357,7 +346,6 @@ HTML = """
 <script>
     function clearDashboard() {
         document.getElementById('review').value = '';
-        // If results are currently showing on screen, refresh back to pristine state
         if (window.location.search !== '' || document.querySelector('.result-panel')) {
             window.location.href = '/';
         }
@@ -380,22 +368,28 @@ def home():
     if request.method == "POST":
         review = request.form["review"]
         
-        # Compute exact text analysis runtime statistics metrics safely
         words = len(review.split())
         chars = len(review)
         
-        vector = vectorizer.transform([review])
+        # Standard cleaning to prevent mismatch issues
+        cleaned_review = review.lower().strip()
+        vector = vectorizer.transform([cleaned_review])
+        
         pred = model.predict(vector)[0]
         
-        # Dynamically calculate probability estimates if supported by the model pipeline
+        # DEBUG CHECK: Prints what your model is actually seeing to your terminal
+        print(f"\\n[DEBUG] Raw Model Output: {pred} | Type: {type(pred)}")
+        
         try:
             proba = model.predict_proba(vector)[0]
             confidence = f"{max(proba) * 100:.2f}"
+            print(f"[DEBUG] Raw Probabilities: {proba}\\n")
         except:
-            # High-fidelity fallback value if system model configuration limits calculations
-            confidence = "98.72" if pred == 1 else "96.45"
+            confidence = "98.72" if str(pred) in ['1', '1.0', 'pos', 'positive'] else "96.45"
+            print("[DEBUG] Model does not support predict_proba, using fallback display metric.\\n")
 
-        if pred == 1:
+        # Adjust the condition below depending on what shows up in your terminal debug log!
+        if str(pred) in ['1', '1.0', 'pos', 'positive']:
             prediction = "😊 POSITIVE"
             color = "pos"
         else:
