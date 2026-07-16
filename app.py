@@ -17,180 +17,229 @@ HTML = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sentiment Analysis Dashboard</title>
+    <title>AI Sentiment Intelligence</title>
     <style>
         :root {
-            --bg-main: #f8fafc;
-            --panel-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --border: #e2e8f0;
+            --bg-color: #090d16;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
             
-            --pos-bg: #f0fdf4;
-            --pos-text: #166534;
-            --pos-border: #bbf7d0;
+            /* Neon Glow Gradients */
+            --primary-grad: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --primary-glow: rgba(99, 102, 241, 0.4);
             
-            --neg-bg: #fef2f2;
-            --neg-text: #991b1b;
-            --neg-border: #fecaca;
+            /* Status Colors */
+            --pos-bg: rgba(16, 185, 129, 0.1);
+            --pos-border: rgba(16, 185, 129, 0.3);
+            --pos-glow: rgba(16, 185, 129, 0.2);
+            --pos-text: #34d399;
+            
+            --neg-bg: rgba(239, 68, 68, 0.1);
+            --neg-border: rgba(239, 68, 68, 0.3);
+            --neg-glow: rgba(239, 68, 68, 0.2);
+            --neg-text: #f87171;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+            color: var(--text-primary);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 24px;
+            padding: 20px;
+            overflow-x: hidden;
         }
 
-        .dashboard {
+        .container {
             width: 100%;
-            max-width: 680px;
-            background: var(--panel-bg);
+            max-width: 600px;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             padding: 40px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+            position: relative;
+        }
+
+        /* Subtle top ambient glow bar */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: var(--primary-grad);
+            filter: blur(4px);
         }
 
         .header {
-            margin-bottom: 32px;
+            text-align: center;
+            margin-bottom: 35px;
         }
 
         h1 {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            color: var(--text-main);
-            margin-bottom: 6px;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
         }
 
         .subtitle {
             font-size: 14px;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
         }
 
         .form-group {
             margin-bottom: 24px;
+            position: relative;
         }
 
         label {
             display: block;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-main);
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
         }
 
         textarea {
             width: 100%;
-            height: 160px;
-            padding: 16px;
-            font-size: 15px;
-            line-height: 1.5;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            background-color: #fafafa;
+            height: 150px;
+            padding: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
             resize: none;
-            color: var(--text-main);
-            transition: all 0.2s ease;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            background-color: var(--panel-bg);
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            border-color: #818cf8;
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.15);
         }
 
         button {
             width: 100%;
-            padding: 14px;
-            background: var(--primary);
+            padding: 16px;
+            background: var(--primary-grad);
             border: none;
             color: white;
-            font-size: 15px;
-            font-weight: 600;
-            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 16px;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px var(--primary-glow);
         }
 
         button:hover {
-            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--primary-glow);
+            filter: brightness(1.1);
+        }
+
+        button:active {
+            transform: translateY(0);
         }
 
         .result {
-            margin-top: 24px;
-            padding: 18px;
-            border-radius: 10px;
+            margin-top: 28px;
+            padding: 20px;
+            border-radius: 16px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             border: 1px solid transparent;
-            animation: fadeIn 0.3s ease-in-out;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .pos {
             background: var(--pos-bg);
             color: var(--pos-text);
             border-color: var(--pos-border);
+            box-shadow: 0 10px 20px -5px var(--pos-glow);
         }
 
         .neg {
             background: var(--neg-bg);
             color: var(--neg-text);
             border-color: var(--neg-border);
+            box-shadow: 0 10px 20px -5px var(--neg-glow);
         }
 
         .footer {
             margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
             text-align: center;
-            font-size: 13px;
-            color: var(--text-muted);
+            font-size: 12px;
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
+    <!-- Importing modern font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div class="dashboard">
+<div class="container">
     <div class="header">
-        <h1>Sentiment Analysis</h1>
-        <div class="subtitle">Logistic Regression + TF-IDF Production Environment</div>
+        <h1>Sentiment AI</h1>
+        <div class="subtitle">NLP Inference Engine</div>
     </div>
 
     <form method="POST">
         <div class="form-group">
-            <label for="review">Input Text</label>
+            <label for="review">Analyze Text Sentiment</label>
             <textarea
                 id="review"
                 name="review"
-                placeholder="Type or paste sample text here to evaluate sentiment classification..."
+                placeholder="Type or paste your review here to run the sentiment classification model..."
                 required>{{review}}</textarea>
         </div>
-        <button type="submit">Run Inference Pipeline</button>
+        <button type="submit">Analyze Sentiment</button>
     </form>
 
     {% if prediction %}
@@ -200,7 +249,7 @@ HTML = """
     {% endif %}
 
     <div class="footer">
-        System engineered by Pranita
+        Crafted by Pranita
     </div>
 </div>
 
