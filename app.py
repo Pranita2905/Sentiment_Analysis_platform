@@ -13,213 +13,224 @@ with open("vectorizer.pkl", "rb") as f:
 
 HTML = """
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sentiment Analysis Dashboard</title>
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --panel-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --border: #e2e8f0;
+            
+            --pos-bg: #f0fdf4;
+            --pos-text: #166534;
+            --pos-border: #bbf7d0;
+            
+            --neg-bg: #fef2f2;
+            --neg-text: #991b1b;
+            --neg-border: #fecaca;
+        }
 
-<title>Sentiment Analysis</title>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
 
-<style>
+        .dashboard {
+            width: 100%;
+            max-width: 680px;
+            background: var(--panel-bg);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Segoe UI,sans-serif;
-}
+        .header {
+            margin-bottom: 32px;
+        }
 
-body{
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
 
-background:linear-gradient(135deg,#0f172a,#2563eb);
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
-padding:20px;
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
 
-}
+        .form-group {
+            margin-bottom: 24px;
+        }
 
-.container{
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
 
-width:100%;
-max-width:900px;
-background:white;
-padding:40px;
-border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,.25);
+        textarea {
+            width: 100%;
+            height: 160px;
+            padding: 16px;
+            font-size: 15px;
+            line-height: 1.5;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background-color: #fafafa;
+            resize: none;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
 
-}
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: var(--panel-bg);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
 
-h1{
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            border: none;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
 
-text-align:center;
-color:#1e40af;
-margin-bottom:10px;
+        button:hover {
+            background: var(--primary-hover);
+        }
 
-}
+        .result {
+            margin-top: 24px;
+            padding: 18px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 1px solid transparent;
+            animation: fadeIn 0.3s ease-in-out;
+        }
 
-p{
+        .pos {
+            background: var(--pos-bg);
+            color: var(--pos-text);
+            border-color: var(--pos-border);
+        }
 
-text-align:center;
-color:#64748b;
-margin-bottom:30px;
+        .neg {
+            background: var(--neg-bg);
+            color: var(--neg-text);
+            border-color: var(--neg-border);
+        }
 
-}
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
 
-textarea{
-
-width:100%;
-height:220px;
-padding:18px;
-font-size:17px;
-border-radius:12px;
-border:1px solid #ccc;
-resize:none;
-
-}
-
-button{
-
-margin-top:20px;
-width:100%;
-padding:16px;
-background:#2563eb;
-border:none;
-color:white;
-font-size:20px;
-border-radius:12px;
-cursor:pointer;
-
-}
-
-button:hover{
-
-background:#1d4ed8;
-
-}
-
-.result{
-
-margin-top:30px;
-padding:20px;
-border-radius:15px;
-text-align:center;
-font-size:28px;
-font-weight:bold;
-
-}
-
-.pos{
-
-background:#dcfce7;
-color:#15803d;
-
-}
-
-.neg{
-
-background:#fee2e2;
-color:#dc2626;
-
-}
-
-.footer{
-
-margin-top:30px;
-text-align:center;
-color:#64748b;
-
-}
-
-</style>
-
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="container">
+<div class="dashboard">
+    <div class="header">
+        <h1>Sentiment Analysis</h1>
+        <div class="subtitle">Logistic Regression + TF-IDF Production Environment</div>
+    </div>
 
-<h1>😊 Sentiment Analysis System</h1>
+    <form method="POST">
+        <div class="form-group">
+            <label for="review">Input Text</label>
+            <textarea
+                id="review"
+                name="review"
+                placeholder="Type or paste sample text here to evaluate sentiment classification..."
+                required>{{review}}</textarea>
+        </div>
+        <button type="submit">Run Inference Pipeline</button>
+    </form>
 
-<p>Logistic Regression + TF-IDF + Flask</p>
+    {% if prediction %}
+    <div class="result {{color}}">
+        {{prediction}}
+    </div>
+    {% endif %}
 
-<form method="POST">
-
-<textarea
-name="review"
-placeholder="Enter your review here..."
-required>{{review}}</textarea>
-
-<button type="submit">
-
-Analyze Sentiment
-
-</button>
-
-</form>
-
-{% if prediction %}
-
-<div class="result {{color}}">
-
-{{prediction}}
-
-</div>
-
-{% endif %}
-
-<div class="footer">
-
-Developed by Pranita
-
-</div>
-
+    <div class="footer">
+        System engineered by Pranita
+    </div>
 </div>
 
 </body>
-
 </html>
 """
 
 @app.route("/", methods=["GET","POST"])
 def home():
-
     prediction = ""
     color = ""
     review = ""
 
     if request.method == "POST":
-
         review = request.form["review"]
-
         vector = vectorizer.transform([review])
-
         pred = model.predict(vector)[0]
 
         if pred == 1:
-
-            prediction = "😊 Positive Review"
-
+            prediction = "✨ Positive Sentiment Detected"
             color = "pos"
-
         else:
-
-            prediction = "😞 Negative Review"
-
+            prediction = "⚠️ Negative Sentiment Detected"
             color = "neg"
 
     return render_template_string(
-
         HTML,
-
         prediction=prediction,
-
         color=color,
-
         review=review
-
     )
 
 if __name__ == "__main__":
